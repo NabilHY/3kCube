@@ -1,17 +1,52 @@
+SERVER_IP   = "192.168.56.110"
+AGENT_IP    = "192.168.56.111"
+SERVER_HOST = "member1S"
+WORKER_HOST = "member2SW"
+
 Vagrant.configure("2") do |config|
+  config.vm.box = "almalinux/9"
+  config.vm.box_check_update = false
+
+  # --- Server Node ---
   config.vm.define "member1S" do |server|
-    server.vm.box = "generic/fedora28"
-    server.vm.box_version = "4.3.12"
-#    server.vm.network "private_network", ip: "192.168.56.110"
     server.vm.hostname = "member1S"
-    server.vm.provider :libvirt do |libvirt|
-      libvirt.uri = "qemu:///system"
-      libvirt.cpus = 1
-      libvirt.memory = 512
+    server.vm.network "private_network", ip: SERVER_IP
+
+    server.vm.provider :libvirt do |lv|
+      lv.uri    = "qemu:///system"
+      lv.cpus   = 2
+      lv.memory = 2048
     end
-    server.vm.provision "shell", inline: <<-SHELL
-        set -e
-        dnf update -y
-      SHELL
+  end
+
+  # --- Agent/Worker Node ---
+  config.vm.define "member2SW" do |agent|
+    agent.vm.hostname = "member2SW"
+    agent.vm.network "private_network", ip: AGENT_IP
+
+    agent.vm.provider :libvirt do |lv|
+      lv.uri    = "qemu:///system"
+      lv.cpus   = 2
+      lv.memory = 2048
     end
+
+    # Ansible Ignition (Fires after both VMs are up)
+    agent.vm.provision "ansible" do |ansible|
+      ansible.config_file        = "confs/ansible/ansible.cfg"
+      ansible.playbook           = "confs/ansible/playbook.yml"
+      ansible.limit              = "all"
+      ansible.compatibility_mode = "2.0"
+      ansible.host_key_checking  = false
+      ansible.groups = {
+        "k3s_server" => [SERVER_HOST],
+        "k3s_agent"  => [WORKER_HOST]
+      }
+      
+
+      ansible.extra_vars = {
+        k3s_server_ip: SERVER_IP,
+        ansible_python_interpreter: "/usr/bin/python3.9"
+      }
+    end
+  end
 end
