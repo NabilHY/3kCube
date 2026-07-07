@@ -1,8 +1,11 @@
-- name: Common Node Configuration
-  hosts: all
-  gather_facts: false
-  vars:
-    ansible_python_intepreter: /usr/bin/python3.9
-  tasks:
-    - name: Ping target nodes
-      ansible.builtin.ping:
+- name: Provision k3s control-plane node
+  hosts: k3s_server
+  become: true
+  roles:
+    - k3s
+
+- name: Provision k3s worker node
+  hosts: k3s_agent
+  become: true
+  roles:
+    - k3s
