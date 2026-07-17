@@ -1,52 +1,49 @@
 SERVER_IP   = "192.168.56.110"
 AGENT_IP    = "192.168.56.111"
 SERVER_HOST = "member1S"
-WORKER_HOST = "member2SW"
+AGENT_HOST = "member2SW"
+
 
 Vagrant.configure("2") do |config|
   config.vm.box = "almalinux/9"
   config.vm.box_check_update = false
 
   # --- Server Node ---
-  config.vm.define "member1S" do |server|
-    server.vm.hostname = "member1S"
+  config.vm.define SERVER_HOST do |server|
+    server.vm.hostname = SERVER_HOST
     server.vm.network "private_network", ip: SERVER_IP
+
+    server.vm.synced_folder ".", "/vagrant", type: "virtiofs"
 
     server.vm.provider :libvirt do |lv|
       lv.uri    = "qemu:///system"
       lv.cpus   = 2
-      lv.memory = 2048
+      lv.memory = 4096
+
+      lv.memorybacking :access, :mode => "shared"
     end
+    #1. Base Dependecies (Run First)
+    server.vm.provision "install_deps", type: "shell", path: "scripts/deps.sh"
+    #2. K3s setup (server)
+    server.vm.provision "setup_cluster",  type: "shell", path: "scripts/server.sh", run: "never"
   end
 
   # --- Agent/Worker Node ---
-  config.vm.define "member2SW" do |agent|
-    agent.vm.hostname = "member2SW"
+  config.vm.define AGENT_HOST do |agent|
+    agent.vm.hostname = AGENT_HOST
     agent.vm.network "private_network", ip: AGENT_IP
 
+    agent.vm.synced_folder ".", "/vagrant", type: "virtiofs"
     agent.vm.provider :libvirt do |lv|
       lv.uri    = "qemu:///system"
-      lv.cpus   = 1
-      lv.memory = 512
+      lv.cpus   = 2
+      lv.memory = 4096
+      lv.memorybacking :access, :mode => "shared"
     end
-
-    # Ansible Ignition (Fires after both VMs are up)
-    agent.vm.provision "ansible" do |ansible|
-      ansible.config_file        = "confs/ansible/ansible.cfg"
-      ansible.playbook           = "confs/ansible/playbook.yml"
-      ansible.limit              = "all"
-      ansible.compatibility_mode = "2.0"
-      ansible.host_key_checking  = false
-      ansible.groups = {
-        "k3s_server" => [SERVER_HOST],
-        "k3s_agent"  => [WORKER_HOST]
-      }
-
-      ansible.extra_vars = {
-        k3s_server_ip: SERVER_IP,
-        k3s_agent_ip: AGENT_IP,
-        ansible_python_interpreter: "/usr/bin/python3.9"
-      }
-    end
+    #1. Base Dependecies (Run First)
+    agent.vm.provision "install_deps", type: "shell", path: "scripts/deps.sh"
+    #2. Cluster Setup (agent)
+    agent.vm.provision "setup_cluster", type: "shell", path: "scripts/agent.sh", run: "never"
   end
 end
+

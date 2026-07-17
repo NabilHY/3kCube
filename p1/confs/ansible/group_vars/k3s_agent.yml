@@ -1,2 +1,0 @@
-k3s_role: agent
-node_ip: "{{ k3s_agent_ip }}"

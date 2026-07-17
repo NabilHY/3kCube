@@ -1,2 +1,0 @@
-k3s_role: server
-node_ip: "{{ k3s_server_ip }}"
