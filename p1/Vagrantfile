@@ -18,7 +18,7 @@ Vagrant.configure("2") do |config|
     server.vm.provider :libvirt do |lv|
       lv.uri    = "qemu:///system"
       lv.cpus   = 2
-      lv.memory = 4096
+      lv.memory = 2048
 
       lv.memorybacking :access, :mode => "shared"
     end
@@ -37,7 +37,7 @@ Vagrant.configure("2") do |config|
     agent.vm.provider :libvirt do |lv|
       lv.uri    = "qemu:///system"
       lv.cpus   = 2
-      lv.memory = 4096
+      lv.memory = 2048
       lv.memorybacking :access, :mode => "shared"
     end
     #1. Base Dependecies (Run First)
@@ -46,4 +46,5 @@ Vagrant.configure("2") do |config|
     agent.vm.provision "setup_cluster", type: "shell", path: "scripts/agent.sh", run: "never"
   end
 end
+
 
