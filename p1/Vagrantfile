@@ -5,7 +5,7 @@ AGENT_HOST = "member2SW"
 
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "almalinux/9"
+  config.vm.box = "debian/bookworm64"
   config.vm.box_check_update = false
 
   # --- Server Node ---
@@ -26,6 +26,7 @@ Vagrant.configure("2") do |config|
     server.vm.provision "install_deps", type: "shell", path: "scripts/deps.sh"
     #2. K3s setup (server)
     server.vm.provision "setup_cluster",  type: "shell", path: "scripts/server.sh", run: "never"
+    server.vm.provision "setup_controller",  type: "shell", path: "scripts/controllers.sh", run: "never"
   end
 
   # --- Agent/Worker Node ---

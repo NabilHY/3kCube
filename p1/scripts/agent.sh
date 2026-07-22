@@ -7,7 +7,8 @@ set -euo pipefail
 systemctl stop k3s-agent 2>/dev/null || true
 rm -rf /var/lib/rancher/k3s /etc/rancher/k3s
 
-dnf install -y nc
+export DEBIAN_FRONTEND=noninteractive
+apt-get install -y netcat-openbsd
 until nc -z 192.168.56.110 6443; do
   echo "Waiting for server API to be reachable..."
   sleep 2

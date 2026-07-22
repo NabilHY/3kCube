@@ -13,7 +13,8 @@ p1: p1-clean
 	cd $(P1_DIR) && rm -rf node-token
 	cd $(P1_DIR) && vagrant up
 	cd $(P1_DIR) && vagrant provision $(SERVER) --provision-with setup_cluster
-	cd $(P1_DIR) && vagrant provision $(AGENT)  --provision-with setup_cluster
+	cd $(P1_DIR) && vagrant provision $(AGENT)  --provision-with setup_cluster	
+	cd $(P1_DIR) && vagrant provision $(SERVER)  --provision-with setup_controller
 
 ## Destroy VMs and wipe the node-token
 p1-clean:

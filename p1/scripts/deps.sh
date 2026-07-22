@@ -2,11 +2,13 @@
 
 set -euo pipefail
 
-dnf update -y
+export DEBIAN_FRONTEND=noninteractive
 
-dnf install ca-certificates -y
+apt-get update -y
+apt-get upgrade -y
 
-# update the certificate authority trust store
-dnf install -y https://rpm.rancher.io/k3s/stable/common/centos/9/noarch/k3s-selinux-1.6-1.el9.noarch.rpm
+apt-get install -y ca-certificates curl
+
+# No SELinux on Debian — the k3s-selinux RPM is not needed.
 
 echo "deps installed"
