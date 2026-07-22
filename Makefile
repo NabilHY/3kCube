@@ -1,9 +1,17 @@
 .PHONY: p1 p1-provision p1-clean p1-re p1-status \
-	p1-ssh-server p1-ssh-agent p1-halt
+	p1-ssh-server p1-ssh-agent p1-halt \
+	p2 p2-clean p2-re p2-halt p2-status p2-ssh
 
 P1_DIR   = ./p1
 SERVER   = member1S
 AGENT    = member2SW
+
+P2_DIR   = ./p2
+P2_SERVER = nhayounS
+
+# ═══════════════════════════════════════════════════════════
+# P1
+# ═══════════════════════════════════════════════════════════
 
 # ──── Build ────────────────────────────────────────────────
 
@@ -42,3 +50,36 @@ p1-ssh-server:
 ## SSH into the agent node
 p1-ssh-agent:
 	cd $(P1_DIR) && vagrant ssh $(AGENT)
+
+# ═══════════════════════════════════════════════════════════
+# P2
+# ═══════════════════════════════════════════════════════════
+
+# ──── Build ────────────────────────────────────────────────
+
+## Bring up the server VM
+p2: p2-clean
+	@echo "⟶  Bringing up p2 server VM …"
+	cd $(P2_DIR) && vagrant up
+
+## Destroy the VM
+p2-clean:
+	@echo "⟶  Destroying p2 VM …"
+	cd $(P2_DIR) && vagrant destroy -f
+
+## Tear down and rebuild from scratch
+p2-re: p2-clean p2
+
+## Halt (power off) the VM without destroying it
+p2-halt:
+	cd $(P2_DIR) && vagrant halt
+
+# ──── Info / Debug ─────────────────────────────────────────
+
+## Show VM status
+p2-status:
+	cd $(P2_DIR) && vagrant status
+
+## SSH into the server node
+p2-ssh:
+	cd $(P2_DIR) && vagrant ssh $(P2_SERVER)
