@@ -4,15 +4,7 @@ set -eu
 # create default config dir and define node settings prior to bin installation
 mkdir -p /etc/rancher/k3s
 
-# Read the pre-generated cluster token injected by the Makefile
-NODE_TOKEN=$(cat /vagrant/.node-token | tr -d '[:space:]')
-if [ -z "$NODE_TOKEN" ]; then
-  echo "Error: /vagrant/.node-token is missing or empty!" >&2
-  exit 1
-fi
-
 cat >/etc/rancher/k3s/config.yaml <<EOF
-token: "${NODE_TOKEN}"
 kubelet-arg:
   - "max-pods=110"
   - "resolv-conf=/etc/resolv.conf"

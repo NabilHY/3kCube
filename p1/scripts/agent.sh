@@ -1,40 +1,39 @@
-#!/bin/bash
-set -euo pipefail
+#!/bin/sh
+set -eu
 
-# Same reasoning as server.sh — wipe any state left over from a previous
-# join attempt before this one. This specifically prevents an agent from
-# holding credentials cached against a CA the server no longer has.
-systemctl stop k3s-agent 2>/dev/null || true
-rm -rf /var/lib/rancher/k3s /etc/rancher/k3s
+apk add --no-cache netcat-openbsd
 
-export DEBIAN_FRONTEND=noninteractive
-apt-get install -y netcat-openbsd
 until nc -z 192.168.56.110 6443; do
   echo "Waiting for server API to be reachable..."
   sleep 2
 done
 
-echo "Waiting for server token..."
-timeout=300
-elapsed=0
-until [ -s /vagrant/node-token ]; do
-  if [ "$elapsed" -ge "$timeout" ]; then
-    echo "Timed out waiting for node-token" >&2
-    exit 1
-  fi
-  sleep 2
-  elapsed=$((elapsed + 2))
-done
-
-K3S_TOKEN=$(cat /vagrant/node-token | tr -d '[:space:]')
-if [ -z "$K3S_TOKEN" ]; then
-  echo "Error: node-token file is empty!" >&2
+# Read the pre-generated cluster token injected by the Makefile
+NODE_TOKEN=$(cat /vagrant/.node-token | tr -d '[:space:]')
+if [ -z "$NODE_TOKEN" ]; then
+  echo "Error: /vagrant/.node-token is missing or empty!" >&2
   exit 1
 fi
-export K3S_TOKEN
+
+# create default config dir and define node settings prior to bin installation
+mkdir -p /etc/rancher/k3s
+
+cat >/etc/rancher/k3s/config.yaml <<EOF
+token: "${NODE_TOKEN}"
+kubelet-arg:
+  - "max-pods=110"
+  - "resolv-conf=/etc/resolv.conf"
+EOF
+
+export K3S_TOKEN=$NODE_TOKEN
 export K3S_URL="https://192.168.56.110:6443"
 export INSTALL_K3S_EXEC="--node-ip=192.168.56.111 --flannel-iface=eth1"
-
 echo "Starting K3s agent installation..."
 curl -sfL https://get.k3s.io | sh -
 echo "K3s installation succeeded!"
+
+echo "Waiting for k3s-agent service to be active..."
+until rc-service k3s-agent status 2>/dev/null | grep -q "started"; do
+  sleep 2
+done
+echo "K3s agent service is running."

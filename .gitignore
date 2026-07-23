@@ -2,3 +2,4 @@
 !.gitignore
 .*/
 node-token
+Makefile
