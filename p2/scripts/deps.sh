@@ -17,4 +17,11 @@ apk add --no-cache \
   iptables \
   cni-plugins
 
+# Set vagrant's login shell to bash (Alpine defaults to ash)
+sed -i 's|vagrant:/bin/ash|vagrant:/bin/bash|' /etc/passwd
+
+# Inject aliases into vagrant's environment
+cp /vagrant/confs/aliases /home/vagrant/.bash_aliases
+grep -q 'bash_aliases' /home/vagrant/.bashrc 2>/dev/null || echo '. ~/.bash_aliases' >> /home/vagrant/.bashrc
+
 echo "deps installed"
