@@ -24,6 +24,6 @@ Vagrant.configure("2") do |config|
       "SERVER_IP" => SERVER_IP,
       "SERVER_HOST" => SERVER_HOST
     }
+    server.vm.provision "Deploying app pods", type: "shell", path: "scripts/deployments.sh"
   end
-
 end

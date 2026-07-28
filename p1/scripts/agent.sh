@@ -3,7 +3,7 @@ set -eu
 
 apk add --no-cache netcat-openbsd
 
-until nc -z 192.168.56.110 6443; do
+until nc -z "$SERVER_IP" 6443; do
   echo "Waiting for server API to be reachable..."
   sleep 2
 done
@@ -26,8 +26,9 @@ kubelet-arg:
 EOF
 
 export K3S_TOKEN=$NODE_TOKEN
-export K3S_URL="https://192.168.56.110:6443"
-export INSTALL_K3S_EXEC="--node-ip=192.168.56.111 --flannel-iface=eth1"
+export K3S_URL="https://$SERVER_IP:6443"
+export K3S_NODE_NAME="$AGENT_HOST"
+export INSTALL_K3S_EXEC="--node-ip=$AGENT_IP --flannel-iface=eth1"
 echo "Starting K3s agent installation..."
 curl -sfL https://get.k3s.io | sh -
 echo "K3s installation succeeded!"

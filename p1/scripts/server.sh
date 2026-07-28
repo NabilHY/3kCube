@@ -19,7 +19,8 @@ kubelet-arg:
 EOF
 
 # Execute installer script
-export INSTALL_K3S_EXEC="--node-ip=192.168.56.110 --advertise-address=192.168.56.110 --flannel-iface=eth1 --write-kubeconfig-mode 644"
+export K3S_NODE_NAME="$SERVER_HOST"
+export INSTALL_K3S_EXEC="--node-ip=$SERVER_IP --advertise-address=$SERVER_IP --flannel-iface=eth1 --write-kubeconfig-mode 644"
 echo "Starting K3s server installation..."
 curl -sfL https://get.k3s.io | sh -
 echo "K3s installation succeeded!"

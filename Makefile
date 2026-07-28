@@ -24,9 +24,9 @@ P2_SERVER = nhayounS
 TOKEN_FILE:= $(P1_DIR)/.node-token
 
 $(TOKEN_FILE):
-	@echo "Generating new K3s cluster token..."
-	@openssl rand -hex 32 > $(TOKEN_FILE)
-	@chmod 600 $(TOKEN_FILE)
+	echo "Generating new K3s cluster token..."
+	openssl rand -hex 32 > $(TOKEN_FILE)
+	chmod 600 $(TOKEN_FILE)
 
 # ──── Build ────────────────────────────────────────────────
 
