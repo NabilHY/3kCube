@@ -14,3 +14,23 @@ spec:
                 name: app-one # <-- 3. Hands traffic off to Service app-one
                 port:
                   number: 80 # <-- 4. Directs to service's exposed port 80
+    - host: app2.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: app-two
+                port:
+                  number: 80
+    - host: app3.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: app-three
+                port:
+                  number: 80

@@ -17,3 +17,14 @@ spec:
           image: paulbouwer/hello-kubernetes:1.10
           ports:
             - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-three
+spec:
+  selector:
+    app: app-three
+  ports:
+    - port: 80
+      targetPort: 8080
