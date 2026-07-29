@@ -1,4 +1,4 @@
-SERVER_IP   = "192.168.56.120"
+SERVER_IP   = "192.168.56.110"
 SERVER_HOST = "nhayounS"
 
 Vagrant.configure("2") do |config|

@@ -1,6 +1,6 @@
 .PHONY: help p1 p1-provision p1-clean p1-re p1-status \
 	p1-ssh-server p1-ssh-agent p1-halt \
-	p2 p2-clean p2-re p2-halt p2-restore p2-status p2-ssh
+	p2 p2-test p2-clean p2-re p2-halt p2-restore p2-status p2-ssh
 
 ## Show this help
 help:
@@ -74,6 +74,21 @@ p1-ssh-agent:
 p2: p2-clean
 	@echo "⟶  Bringing up p2 server VM …"
 	cd $(P2_DIR) && vagrant up
+	@$(MAKE) p2-test
+
+## Run simple tests against the p2 VM
+p2-test:
+	@echo "⟶  Running p2 tests …"
+	@echo "\n── curl -H 'Host: app1.com' http://192.168.56.110 ──"
+	@curl -s -H "Host: app1.com" http://192.168.56.10
+	@echo "\n── curl -H 'Host: app2.com' http://192.168.56.110 ──"
+	@curl -s -H "Host: app2.com" http://192.168.56.110
+	@echo "\n── curl http://192.168.56.110 ──"
+	@curl -s http://192.168.56.110
+	@echo "\n── kubectl get ingress ──"
+	@cd $(P2_DIR) && vagrant ssh $(P2_SERVER) -c "kubectl get ingress"
+	@echo "\n── kubectl get pods ──"
+	@cd $(P2_DIR) && vagrant ssh $(P2_SERVER) -c "kubectl get pods"
 
 ## Destroy the VM
 p2-clean:
