@@ -2,7 +2,10 @@
 
 set -eou pipefail
 
-echo " +++ Installing container environment +++"
-bash "container-env.sh"
+SCRIPT_DIR="$(pwd)"
 
-bash container-env.sh --post-docker w
+echo " +++ Installing container environment +++ "
+bash "$SCRIPT_DIR/container-env.sh"
+
+echo " +++ Setting up infrastructure +++"
+bash "$SCRIPT_DIR/infra.sh"
