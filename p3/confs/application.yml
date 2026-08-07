@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nhayoun-playground
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/NabilHY/iot-p3-nhayoun.git
+    targetRevision: HEAD
+    path: confs
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nhayoun-playground
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nhayoun-playground
+  template:
+    metadata:
+      labels:
+        app: nhayoun-playground
+    spec:
+      containers:
+        - name: nhayoun-playground
+          image: goslinabil/3kcube:v1
+          # pure docs
+          ports:
+            - containerPort: 8885

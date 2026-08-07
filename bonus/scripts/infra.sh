@@ -9,7 +9,7 @@ echo "===> Complete Docker System prune"
 docker system prune -af --volumes
 
 echo "INFRA Build :==> [1/6] spinning k3d cluster 'cd-cluster' with port mapping ..."
-k3d cluster create cd-cluster -p "8000:8885@loadbalancer"
+k3d cluster create cd-cluster -p "8888:8888@loadbalancer"
 
 echo "Sleeping for 10 seconds to let cluster stabilize ..."
 sleep 10
@@ -24,9 +24,6 @@ kubectl create namespace dev || true
 echo "Deploy ArgoCD :===> [2/6] Apply ArgoCD installation manifests ..."
 kubectl apply -n argocd --server-side --force-conflicts -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
-echo "===> Setting ArgoCD reconcile timeout to 10 seconds for fast dev sync ..."
-kubectl patch cm argocd-cm -n argocd --type merge -p '{"data": {"timeout.reconcile": "10s"}}'
-
 echo "===> Waiting for ArgoCD server pod to reach Ready state ..."
 kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=argocd-server -n argocd --timeout=300s
 
@@ -34,17 +31,5 @@ echo "===> Extract auto-generated initial admin password:"
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
 echo "" # Line break for clean terminal formatting
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CONFS_DIR="$SCRIPT_DIR/../confs"
-
-echo "===> [3/6] Applying Deployment manifest ..."
-kubectl apply -f "$CONFS_DIR/deployment.yml"
-
-echo "===> [4/6] Applying Service manifest ..."
-kubectl apply -f "$CONFS_DIR/service.yml"
-
-echo "===> [5/6] Applying ArgoCD Application manifest ..."
-kubectl apply -f "$CONFS_DIR/application.yml"
-
-echo "===> [6/6] Port-forward the API server (Access via https://localhost:4000)"
-kubectl port-forward --address 0.0.0.0 svc/argocd-server -n argocd 4000:443
+echo "===> Port-forward the API server (Access via https://localhost:8080)"
+kubectl port-forward svc/argocd-server -n argocd 8080:443
