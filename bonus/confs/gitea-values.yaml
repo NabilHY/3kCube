@@ -1,0 +1,9 @@
+gites:
+  admin:
+    username: "root"
+    password: "giteaPassword123!"
+    email: "admin@exemple.com"
+  service:
+    http:
+      type: cluster
+      port: 3000
