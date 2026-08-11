@@ -10,7 +10,7 @@ spec:
     targetRevision: HEAD
     path: confs
   destination:
-    server: 'https://kubernetes.default.svc'
+    server: "https://kubernetes.default.svc"
     namespace: dev
   syncPolicy:
     automated:

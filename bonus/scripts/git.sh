@@ -2,37 +2,22 @@
 
 set -eou pipefail
 
-#echo "[**] Creating a namespace for gitea"
-#kubectl create namespace gitea || true
-#
-#echo "[**] Installing HELM"
-#
-#echo "[**] Installing HELM through script"
-#curl -fsSL -o /tmp/get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4
-#chmod 700 /tmp/get_helm.sh
-#/tmp/get_helm.sh
-#
-#echo "[**] Installing Gitea"
-#helm repo add gitea-charts https://dl.gitea.com/charts/
-#helm repo update
-#
-#echo "[**] Deploying Chart"
-#helm install my-gitea gitea-charts/gitea --create-namespace -n gitea
+ROOT_DIR="$(cd "$(dirname "$0")"/.. && pwd)"
+CONFS_DIR="$ROOT_DIR/confs"
 
-CONFS_DIR="$(dirname "$0")/confs"
+echo "$ROOT_DIR/confs"
+
 NAMESPACE="gitea"
 REALESE_NAME="my-gitea"
-
 echo "[**] Ensuring namespace ${NAMESPACE} exists"
-#? :
 kubectl create namespace "${NAMESPACE}" --dry-run=client -o yaml | kubectl apply -f -
-
-echo "[**] Installing/Updating Helm..."
+echo "[**] Installing Helm..."
 if ! command -v helm &>/dev/null; then
-  curl -fsSL -o /tmp/get_helm.sh https://raw.githubusercontent.com/helm/main/scripts/get-helm-3
-  chmod 700 /tmp/get_helm.sh
-  /tmp/get_helm.sh
+  curl -fsSL -o /tmp/get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4
+  chmod 700 /tmp/get_helm.sh /tmp/get_helm.sh
   rm -f /tmp/get_helm.sh
+else
+  echo "HELM already installed .."
 fi
 
 echo "[**] Adding Gitea Helm repository..."

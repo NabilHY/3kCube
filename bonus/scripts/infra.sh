@@ -9,7 +9,11 @@ echo "===> Complete Docker System prune"
 docker system prune -af --volumes
 
 echo "INFRA Build :==> [*] spinning k3d cluster 'cd-cluster' with port mapping ..."
-k3d cluster create cd-cluster -p "8000:8885@loadbalancer"
+k3d cluster create cd-cluster \
+  -p "8000:80@loadbalancer" \
+  -p "8443:443@loadbalancer" \
+  -p "8885:8885@loadbalancer" \
+  -p "3000:3000@loadbalancer"
 
 echo "Sleeping for 10 seconds to let cluster stabilize ..."
 sleep 10
@@ -33,4 +37,3 @@ kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=argocd-server -
 echo "===> Extract auto-generated initial admin password:"
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
 echo "" # Line break for clean terminal formatting
-

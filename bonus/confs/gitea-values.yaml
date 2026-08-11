@@ -1,9 +1,17 @@
-gites:
+gitea:
   admin:
     username: "root"
     password: "giteaPassword123!"
     email: "admin@exemple.com"
-  service:
-    http:
-      type: cluster
-      port: 3000
+service:
+  http:
+    type: ClusterIP
+    port: 3000
+ingress:
+  enabled: true
+  className: traefik
+  hosts:
+    - host: gitea.local
+      paths:
+        - path: /
+          pathType: Prefix
