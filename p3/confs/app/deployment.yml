@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: nhayoun-playground
-          image: goslinabil/3kcube:v2
+          image: goslinabil/3kcube:v1
           # pure docs
           ports:
             - containerPort: 8885
