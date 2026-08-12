@@ -17,9 +17,8 @@ sleep 10
 echo "==> Verifying cluster connection with kubectl ..."
 kubectl get nodes
 
-echo "===> Creating the mandatory namespaces"
-kubectl create namespace argocd || true
-kubectl create namespace dev || true
+echo "===> Apply Namespaces Bootstrap manifests ..."
+kubectl apply -f confs/namespaces.yml
 
 echo "Deploy ArgoCD :===> [2/6] Apply ArgoCD installation manifests ..."
 kubectl apply -n argocd --server-side --force-conflicts -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
