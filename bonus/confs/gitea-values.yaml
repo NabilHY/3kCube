@@ -5,13 +5,5 @@ gitea:
     email: "admin@exemple.com"
 service:
   http:
-    type: ClusterIP
+    type: LoadBalancer
     port: 3000
-ingress:
-  enabled: true
-  className: traefik
-  hosts:
-    - host: gitea.local
-      paths:
-        - path: /
-          pathType: Prefix

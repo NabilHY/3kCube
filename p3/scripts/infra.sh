@@ -27,7 +27,7 @@ echo "===> Apply Namespaces Bootstrap manifests ..."
 kubectl apply -f "$BOOTSTRAP_DIR/namespaces.yml"
 
 echo "Deploy ArgoCD :===> [2/6] Apply ArgoCD installation manifests ..."
-kubectl apply -n argocd --server-side --force-conflicts -f "$BOOTSTRAP_DIR/argocd-install/install.yaml"
+kubectl apply -n argocd --server-side --force-conflicts -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
 echo "===> Setting ArgoCD reconcile timeout to 10 seconds, through argocd-cm ..."
 kubectl apply -f "$BOOTSTRAP_DIR/argocd-cm.yml"
@@ -40,7 +40,7 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
 echo "" # Line break for clean terminal formatting
 
 echo "===> [5/6] Applying ArgoCD Application manifest ..."
-kubectl apply -f "$APP_DIR/application.yml"
+kubectl apply -f "$BOOTSTRAP_DIR/application.yml"
 
 echo "===> [6/6] Applying ArgoCD Ingress for web UI access ..."
 kubectl apply -f "$BOOTSTRAP_DIR/argocd-ingress.yml"
