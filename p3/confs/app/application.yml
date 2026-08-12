@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/NabilHY/iot-p3-nhayoun.git
     targetRevision: main
-    path: p3/confs
+    path: p3/confs/app
   destination:
     server: "https://kubernetes.default.svc"
     namespace: dev
