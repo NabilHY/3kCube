@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gitea-server
+  namespace: gitea
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: gitea.localhost
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: my-gitea-http
+                port:
+                  number: 3000

@@ -7,10 +7,10 @@ spec:
   project: default
   source:
     repoURL: https://github.com/NabilHY/iot-p3-nhayoun.git
-    targetRevision: HEAD
-    path: confs
+    targetRevision: main
+    path: .
   destination:
-    server: 'https://kubernetes.default.svc'
+    server: "https://kubernetes.default.svc"
     namespace: dev
   syncPolicy:
     automated:

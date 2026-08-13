@@ -5,5 +5,5 @@ gitea:
     email: "admin@exemple.com"
 service:
   http:
-    type: LoadBalancer
+    type: ClusterIP
     port: 3000

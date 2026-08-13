@@ -10,9 +10,6 @@ APP_DIR="$CONFS_DIR/app"
 echo "===> Delete the k3d cluster (nodes, services, pods, network)"
 k3d cluster delete cd-cluster || true
 
-echo "===> Complete Docker System prune"
-docker system prune -af --volumes
-
 echo "INFRA Build :==> [1/6] spinning k3d cluster 'cd-cluster' with port mapping ..."
 # k3d lb receive http ingress traffic on port 80 --- k3d -> internal ingress 80
 k3d cluster create cd-cluster -p "8000:80@loadbalancer"

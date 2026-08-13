@@ -4,7 +4,7 @@ metadata:
   name: nhayoun-playground
   namespace: dev
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: nhayoun-playground
   ports:
