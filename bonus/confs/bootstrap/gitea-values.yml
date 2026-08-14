@@ -2,7 +2,7 @@ gitea:
   admin:
     username: "root"
     password: "giteaPassword123!"
-    email: "admin@exemple.com"
+    email: "admin@local.test"
 service:
   http:
     type: ClusterIP

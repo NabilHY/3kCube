@@ -6,8 +6,8 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/NabilHY/iot-p3-nhayoun.git
-    targetRevision: main
+    repoURL: http://my-gitea-http.gitea.svc.cluster.local:3000/root/iot-gitops.git
+    targetRevision: master
     path: .
   destination:
     server: "https://kubernetes.default.svc"
