@@ -37,7 +37,7 @@ echo "[6/6] Installing Helm..."
 if ! command -v helm &>/dev/null; then
   curl -fsSL -o /tmp/get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4
   chmod 700 /tmp/get_helm.sh /tmp/get_helm.sh
-  /tmp/get_heml.sh
+  /tmp/get_helm.sh
   rm -f /tmp/get_helm.sh
 else
   echo "HELM already installed .."

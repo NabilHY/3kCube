@@ -54,7 +54,7 @@ echo "[**] Initializing git repository in $MANIFESTS_DIR"
 if [ -d "$MANIFESTS_DIR/.git" ]; then
   echo "Git repository already initialized, skipping git init."
 else
-  git init --inital-branch=main "$MANIFESTS_DIR"
+  git init --initial-branch=main "$MANIFESTS_DIR"
   git -C "$MANIFESTS_DIR" config user.name "iot-bootstrap"
   git -C "$MANIFESTS_DIR" config user.email "iot-bootstrap@local"
 fi

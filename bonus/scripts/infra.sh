@@ -34,9 +34,9 @@ echo "===> Setting ArgoCD reconcile timeout to 10 seconds, through argocd-cm ...
 kubectl apply -f "$BOOTSTRAP_DIR/argocd-cm.yml"
 
 echo "===> Restarting ArgoCD in case server doesnt read the argocd-cm"
-kubectl roolout restart deployment/argocd-server -n argocd
+kubectl rollout restart deployment/argocd-server -n argocd
 
-ecoo "===> Waiting for ArgoCD server pod to reach Ready state ..."
+echo "===> Waiting for ArgoCD server pod to reach Ready state ..."
 kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=argocd-server -n argocd --timeout=300s
 
 echo "===> Extract auto-generated initial admin password:"
