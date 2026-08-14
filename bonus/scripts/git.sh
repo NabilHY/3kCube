@@ -12,15 +12,6 @@ REALESE_NAME="my-gitea"
 
 MANIFESTS_DIR="$ROOT_DIR/confs/app/"
 
-echo "[**] Installing Helm..."
-if ! command -v helm &>/dev/null; then
-  curl -fsSL -o /tmp/get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4
-  chmod 700 /tmp/get_helm.sh /tmp/get_helm.sh
-  rm -f /tmp/get_helm.sh
-else
-  echo "HELM already installed .."
-fi
-
 echo "[**] Adding Gitea Helm repository..."
 helm repo add gitea-charts https://dl.gitea.com/charts/
 helm repo update
@@ -63,7 +54,9 @@ echo "[**] Initializing git repository in $MANIFESTS_DIR"
 if [ -d "$MANIFESTS_DIR/.git" ]; then
   echo "Git repository already initialized, skipping git init."
 else
-  git init "$MANIFESTS_DIR"
+  git init --inital-branch=main "$MANIFESTS_DIR"
+  git -C "$MANIFESTS_DIR" config user.name "iot-bootstrap"
+  git -C "$MANIFESTS_DIR" config user.email "iot-bootstrap@local"
 fi
 
 echo "[**] Staging and committing manifests"
@@ -83,4 +76,4 @@ else
 fi
 
 echo "[**] Pushing to Gitea repository (main branch)"
-git -C "$MANIFESTS_DIR" push -u origin master
+git -C "$MANIFESTS_DIR" push -u origin main

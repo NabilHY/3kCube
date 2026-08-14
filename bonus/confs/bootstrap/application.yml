@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     repoURL: http://my-gitea-http.gitea.svc.cluster.local:3000/root/iot-gitops.git
-    targetRevision: master
+    targetRevision: main
     path: .
   destination:
     server: "https://kubernetes.default.svc"
