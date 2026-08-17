@@ -11,10 +11,24 @@ NAMESPACE="gitea"
 REALESE_NAME="my-gitea"
 
 MANIFESTS_DIR="$ROOT_DIR/confs/app/"
+SECRET_FILE="$BOOTSTRAP_DIR/gitea-admin.enc.yml"
 
 echo "[**] Adding Gitea Helm repository..."
 helm repo add gitea-charts https://dl.gitea.com/charts/
 helm repo update
+
+DECRYPTED_SECRET="$(sops --decrypt "$SECRET_FILE")"
+echo "$DECRYPTED_SECRET" | kubectl apply -f -
+
+if ! command -v yq >/dev/null 2>&1; then
+  echo "installing yq..."
+  sudo dnf install yq -y
+fi
+
+GITEA_ADMIN_USER="$(echo "$DECRYPTED_SECRET" | yq '.stringData.username')"
+GITEA_ADMIN_PASSWORD="$(echo "$DECRYPTED_SECRET" | yq '.stringData.password')"
+echo "$GITEA_ADMIN_USER -++++++++++- $GITEA_ADMIN_PASSWORD"
+unset DECRYPTED_SECRET
 
 echo "[**] Applying Gitea Ingress for web UI access ..."
 kubectl apply -f "$BOOTSTRAP_DIR/gitea-ingress.yml"
@@ -35,9 +49,9 @@ done
 
 echo "[**] Creating the iot repo on gitea server (skipping if it already exists)"
 REPO_HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
-  -u 'root:giteaPassword123!' \
+  -u "${GITEA_ADMIN_USER}:${GITEA_ADMIN_PASSWORD}" \
   -H 'Content-Type: application/json' \
-  -X POST 'http://gitea.localhost:8000/api/v1/user/repos' \
+  -X POST "${GITEA_URL}/api/v1/user/repos" \
   -d '{"name":"iot-gitops","private":false,"auto_init":false}')
 if [ "$REPO_HTTP_CODE" -eq 201 ]; then
   echo "Repository created successfully."
@@ -48,7 +62,7 @@ else
   exit 1
 fi
 
-GITEA_URL='http://root:giteaPassword123!@gitea.localhost:8000/root/iot-gitops.git'
+GIT_REMOTE_URL="http://${GITEA_ADMIN_USER}:${GITEA_ADMIN_PASSWORD}@gitea.localhost:8000/${GITEA_ADMIN_USER}/iot-gitops.git"
 
 echo "[**] Initializing git repository in $MANIFESTS_DIR"
 if [ -d "$MANIFESTS_DIR/.git" ]; then
@@ -70,10 +84,12 @@ fi
 echo "[**] Adding Gitea as remote origin"
 if git -C "$MANIFESTS_DIR" remote get-url origin &>/dev/null; then
   echo "Remote 'origin' already exists, updating URL."
-  git -C "$MANIFESTS_DIR" remote set-url origin "$GITEA_URL"
+  git -C "$MANIFESTS_DIR" remote set-url origin "$GIT_REMOTE_URL"
 else
-  git -C "$MANIFESTS_DIR" remote add origin "$GITEA_URL"
+  git -C "$MANIFESTS_DIR" remote add origin "$GIT_REMOTE_URL"
 fi
 
 echo "[**] Pushing to Gitea repository (main branch)"
 git -C "$MANIFESTS_DIR" push -u origin main
+
+unset GITEA_ADMIN_PASSWORD

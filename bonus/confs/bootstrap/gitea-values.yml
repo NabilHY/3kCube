@@ -1,8 +1,8 @@
 gitea:
   admin:
-    username: "root"
-    password: "giteaPassword123!"
+    existingSecret: gitea-admin-secret
     email: "admin@local.test"
+    passwordMode: initialOnlyNoReset
 service:
   http:
     type: ClusterIP
