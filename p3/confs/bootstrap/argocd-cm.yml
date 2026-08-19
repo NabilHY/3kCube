@@ -5,6 +5,7 @@ metadata:
   namespace: argocd
 data:
   timeout.reconcile: 10s
+  timeout.hard.reconciliation: 10s
 ---
 apiVersion: v1
 kind: ConfigMap
