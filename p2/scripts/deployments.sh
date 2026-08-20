@@ -3,45 +3,28 @@
 set -eu
 
 echo "k3s installed ..."
-sleep 30
 
-# apply files to k3s
-echo "Applying configuration files to k3s..."
+echo "Waiting for the Kubernetes API server to wake up..."
+until kubectl get nodes >/dev/null 2>&1; do
+  sleep 2
+done
+echo "API server is up!"
+
+echo "Applying application manifests ..."
 kubectl apply -f /vagrant/confs/.
 
-echo "Waiting 30s for pods to build..."
-sleep 30
+echo "Waiting for the Deployments"
+kubectl wait --for=condition=Available deployment/app-one --timeout=60s
+kubectl wait --for=condition=Available deployment/app-two --timeout=60s
+kubectl wait --for=condition=Available deployment/app-three --timeout=60s
 
-echo "Waiting 30s for pods to build..."
+echo "The App deployements are Available ..."
 
-# verify running pods
-echo "Verifying running pods..."
+echo "Listing Pods :"
 kubectl get pods
 
-echo "Waiting 10s..."
-sleep 10
-
-# check deployement status
-echo "Checking deployment status..."
+echo "Listing Deployments :"
 kubectl get deployments
 
-echo "Waiting 10s..."
-sleep 10
-
-# check the service
-echo "Checking services..."
+echo "Listing Services :"
 kubectl get services
-
-echo "Waiting 10s..."
-sleep 10
-
-# view logs of app one
-echo "Viewing logs for app-one..."
-kubectl logs -l app=app-one
-
-echo "Waiting 10s..."
-sleep 10
-
-# view logs of app two
-echo "Viewing logs for app-two..."
-kubectl logs -l app=app-two

@@ -1,31 +1,25 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: apps-default-backend
+  name: apps-ingress
 spec:
-  defaultBackend: # <-- proper default backend
+  ingressClassName: traefik
+  defaultBackend:
     service:
       name: app-three
       port:
         number: 80
-
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: apps-ingress
-spec:
   rules:
-    - host: app1.com # <-- 1. Matches incoming HTTP Host Header
+    - host: app1.com
       http:
         paths:
-          - path: / # <-- 2. Matches path prefix (e.g http://app1.com/)
+          - path: /
             pathType: Prefix
             backend:
               service:
-                name: app-one # <-- 3. Hands traffic off to Service app-one
+                name: app-one
                 port:
-                  number: 80 # <-- 4. Directs to service's exposed port 80
+                  number: 80
     - host: app2.com
       http:
         paths:
@@ -36,4 +30,12 @@ spec:
                 name: app-two
                 port:
                   number: 80
-
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: app-three
+                port:
+                  number: 80

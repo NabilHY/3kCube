@@ -1,6 +1,8 @@
 .PHONY: help p1 p1-provision p1-clean p1-re p1-status \
 	p1-ssh-server p1-ssh-agent p1-halt \
-	p2 p2-test p2-clean p2-re p2-halt p2-restore p2-status p2-ssh
+	p2 p2-test p2-clean p2-re p2-halt p2-restore p2-status p2-ssh \
+	p3 p3-clean p3-re p3-status p3-test \
+	bonus bonus-clean bonus-re bonus-status bonus-test
 
 ## Show this help
 help:
@@ -15,6 +17,9 @@ AGENT    = member2SW
 
 P2_DIR   = ./p2
 P2_SERVER = nhayounS
+
+P3_DIR   = ./p3
+BONUS_DIR = ./bonus
 
 # ═══════════════════════════════════════════════════════════
 # P1
@@ -76,20 +81,6 @@ p2: p2-clean
 	cd $(P2_DIR) && vagrant up
 	@$(MAKE) p2-test
 
-## Run simple tests against the p2 VM
-p2-test:
-	@echo "⟶  Running p2 tests …"
-	@echo "\n── curl -H 'Host: app1.com' http://192.168.56.110 ──"
-	@curl -s -H "Host: app1.com" http://192.168.56.10
-	@echo "\n── curl -H 'Host: app2.com' http://192.168.56.110 ──"
-	@curl -s -H "Host: app2.com" http://192.168.56.110
-	@echo "\n── curl http://192.168.56.110 ──"
-	@curl -s http://192.168.56.110
-	@echo "\n── kubectl get ingress ──"
-	@cd $(P2_DIR) && vagrant ssh $(P2_SERVER) -c "kubectl get ingress"
-	@echo "\n── kubectl get pods ──"
-	@cd $(P2_DIR) && vagrant ssh $(P2_SERVER) -c "kubectl get pods"
-
 ## Destroy the VM
 p2-clean:
 	@echo "⟶  Destroying p2 VM …"
@@ -115,3 +106,81 @@ p2-status:
 ## SSH into the server node
 p2-ssh:
 	cd $(P2_DIR) && vagrant ssh $(P2_SERVER)
+
+# ═══════════════════════════════════════════════════════════
+# P3
+# ═══════════════════════════════════════════════════════════
+
+# ──── Build ────────────────────────────────────────────────
+
+## Set up k3d cluster with ArgoCD CD pipeline
+p3: p3-clean
+	@echo "⟶  Setting up p3 (k3d + ArgoCD) …"
+	bash $(P3_DIR)/scripts/exec.sh
+
+## Delete the k3d cd-cluster
+p3-clean:
+	@echo "⟶  Destroying p3 k3d cluster …"
+	-k3d cluster delete cd-cluster
+
+## Tear down and rebuild from scratch
+p3-re: p3-clean p3
+
+# ──── Info / Debug ─────────────────────────────────────────
+
+## Show k3d cluster and pod status
+p3-status:
+	@echo "── k3d clusters ──"
+	-k3d cluster list
+	@echo ""
+	@echo "── kubectl nodes ──"
+	-kubectl get nodes
+	@echo ""
+	@echo "── all pods ──"
+	-kubectl get pods -A
+
+## Run CD validation test (delete or update)
+p3-test:
+	cd $(P3_DIR)/scripts && python3 test-cd.py $(ACTION)
+
+# ═══════════════════════════════════════════════════════════
+# BONUS
+# ═══════════════════════════════════════════════════════════
+
+# ──── Build ────────────────────────────────────────────────
+
+## Set up k3d cluster with ArgoCD + Gitea CD pipeline
+bonus: bonus-clean
+	@test -f $(HOME)/.config/sops/age/keys.txt \
+		|| { echo "ERROR: age private key not found at ~/.config/sops/age/keys.txt"; \
+		     echo "       Place the matching private key for the encrypted secret there"; exit 1; }
+	@test -n "$(SOPS_AGE_KEY_FILE)" \
+		|| { echo "ERROR: SOPS_AGE_KEY_FILE env var is not set"; \
+		     echo "       Run: export SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt"; exit 1; }
+	@echo "⟶  Setting up bonus (k3d + ArgoCD + Gitea) …"
+	bash $(BONUS_DIR)/scripts/exec.sh
+
+## Delete the k3d cd-cluster
+bonus-clean:
+	@echo "⟶  Destroying bonus k3d cluster …"
+	-k3d cluster delete cd-cluster
+
+## Tear down and rebuild from scratch
+bonus-re: bonus-clean bonus
+
+# ──── Info / Debug ─────────────────────────────────────────
+
+## Show k3d cluster and pod status
+bonus-status:
+	@echo "── k3d clusters ──"
+	-k3d cluster list
+	@echo ""
+	@echo "── kubectl nodes ──"
+	-kubectl get nodes
+	@echo ""
+	@echo "── all pods ──"
+	-kubectl get pods -A
+
+## Run CD validation test (delete or update)
+bonus-test:
+	cd $(BONUS_DIR)/scripts && python3 test-cd.py $(ACTION)

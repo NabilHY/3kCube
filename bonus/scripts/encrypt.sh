@@ -3,7 +3,7 @@
 set -eou pipefail
 
 ROOT_DIR="$(cd "$(dirname "$0")"/.. && pwd)"
-readonly AGE_KEY_DIR="${HOME}/.config/sops/age"
+readonly AGE_KEY_DIR="${HOME}/.config/sops/"
 readonly AGE_KEY_FILE="${AGE_KEY_DIR}/keys.txt"
 readonly SOPS_YAML_PATH="${ROOT_DIR}/.sops.yaml"
 readonly SECRET_FILE="${ROOT_DIR}/confs/bootstrap/gitea-admin.enc.yml"
@@ -15,12 +15,11 @@ else
   echo "skipping age already installed."
 fi
 
-mkdir -p "${AGE_KEY_DIR}"
-if [ -s "${AGE_KEY_FILE}" ]; then
-  echo "age key already exists at ${AGE_KEY_FILE}"
-else
-  echo "generating new age keypair ..."
-  age-keygen -o "${AGE_KEY_FILE}"
+if [ ! -s "${AGE_KEY_FILE}" ]; then
+  echo "ERROR: age private key not found at ${AGE_KEY_FILE}"
+  echo "       The encrypted secret was created with a specific keypair."
+  echo "       Place the matching private key at: ${AGE_KEY_FILE}"
+  exit 1
 fi
 chmod 600 "${AGE_KEY_FILE}"
 
@@ -39,4 +38,3 @@ creation_rules:
     age: ${AGE_PUBLIC_KEY}
 EOF
 echo "wrote ${SOPS_YAML_PATH}"
-

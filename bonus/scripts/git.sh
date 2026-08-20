@@ -27,7 +27,6 @@ fi
 
 GITEA_ADMIN_USER="$(echo "$DECRYPTED_SECRET" | yq '.stringData.username')"
 GITEA_ADMIN_PASSWORD="$(echo "$DECRYPTED_SECRET" | yq '.stringData.password')"
-echo "$GITEA_ADMIN_USER -++++++++++- $GITEA_ADMIN_PASSWORD"
 unset DECRYPTED_SECRET
 
 echo "[**] Applying Gitea Ingress for web UI access ..."
