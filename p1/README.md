@@ -17,7 +17,7 @@ Setup followed this guide: https://oneuptime.com/blog/post/2026-03-20-k3s-alpine
 The Vagrantfile can technically run under either VirtualBox or libvirt, since `generic/alpine319` is a multi-provider box — but only libvirt gets explicit resource tuning (CPU and memory), via a `config.vm.provider :libvirt` block. There's no equivalent `:virtualbox` block, so running this under VirtualBox would fall back to its own default resource allocation instead of the values set here.
 
 Vagrant does **not** rewrite or convert the file to match whatever provider is installed — it simply skips provider blocks that don't apply to the one you're using.
-```
+
 
 ### Node token
 
