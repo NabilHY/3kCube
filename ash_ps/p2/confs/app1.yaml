@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-one
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-one # <-- 1. Must match service.name in Ingress
+  template:
+    metadata:
+      labels:
+        app: app-one
+    spec:
+      containers:
+        - name: app-one
+          image: paulbouwer/hello-kubernetes:1.10
+          env:
+            - name: MESSAGE
+              value: "Hello from app1"
+          ports:
+            - containerPort: 8080 # <-- Must match targetPort:8080 on the Service
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-one # <-- 1. Must match the service.name in the Ingress
+spec:
+  selector:
+    app: app-one # <-- 3. Crucial! Finds all Pods with label "app: app-one"
+  ports:
+    - port: 80 # <--- 2. must match the service.port.number in ingress
+      targetPort: 8080 # <-- 3. the port running inside the destination Pod

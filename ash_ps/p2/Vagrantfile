@@ -1,0 +1,30 @@
+Vagrant.configure("2") do |config|
+    config.vm.box = "generic/alpine319"
+    config.vm.synced_folder ".", "/vagrant"
+  
+    SERVER_IP="192.168.56.110"
+    SERVER_HOST="aessaoudS"
+  
+    # =========================
+    # Server
+    # =========================
+  
+    config.vm.define "server" do |server|
+      server.vm.hostname = SERVER_HOST
+      server.vm.network "private_network", ip: SERVER_IP
+      
+  
+      server.vm.provider "virtualbox" do |vb|
+        vb.memory = 3072
+        vb.cpus = 2
+        vb.name = SERVER_HOST
+      end
+  
+      # Running commong script
+      server.vm.provision "shell", path: "scripts/install.sh", args: [SERVER_IP]
+      server.vm.provision "shell", path: "scripts/deploy.sh"
+
+    end
+  
+  
+  end
