@@ -35,6 +35,6 @@ cat >"${SOPS_YAML_PATH}" <<EOF
 creation_rules:
   - path_regex: confs/bootstrap/.*\.enc\.ya?ml\$
     encrypted_regex: '^(data|stringData)\$'
-    age: ${AGE_PUBLIC_KEY}
+    age: ${AGE_PUBLIC_KEY} 
 EOF
 echo "wrote ${SOPS_YAML_PATH}"
