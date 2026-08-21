@@ -20,6 +20,9 @@ P2_SERVER = nhayounS
 
 P3_DIR   = ./p3
 BONUS_DIR = ./bonus
+SOPS_AGE_KEY_FILE ?= $(HOME)/.config/sops/age/keys.txt
+export SOPS_AGE_KEY_FILE
+
 
 # ═══════════════════════════════════════════════════════════
 # P1
@@ -151,12 +154,9 @@ p3-test:
 
 ## Set up k3d cluster with ArgoCD + Gitea CD pipeline
 bonus: bonus-clean
-	@test -f $(HOME)/.config/sops/age/keys.txt \
-		|| { echo "ERROR: age private key not found at ~/.config/sops/age/keys.txt"; \
+	@test -f "$(SOPS_AGE_KEY_FILE)" \
+		|| { echo "ERROR: age private key not found at $(SOPS_AGE_KEY_FILE)"; \
 		     echo "       Place the matching private key for the encrypted secret there"; exit 1; }
-	@test -n "$(SOPS_AGE_KEY_FILE)" \
-		|| { echo "ERROR: SOPS_AGE_KEY_FILE env var is not set"; \
-		     echo "       Run: export SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt"; exit 1; }
 	@echo "⟶  Setting up bonus (k3d + ArgoCD + Gitea) …"
 	bash $(BONUS_DIR)/scripts/exec.sh
 

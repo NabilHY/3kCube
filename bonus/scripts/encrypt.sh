@@ -3,12 +3,14 @@
 set -eou pipefail
 
 ROOT_DIR="$(cd "$(dirname "$0")"/.. && pwd)"
-readonly AGE_KEY_DIR="${HOME}/.config/sops"
+readonly AGE_KEY_DIR="${HOME}/.config/sops/age"
 readonly AGE_KEY_FILE="${AGE_KEY_DIR}/keys.txt"
 readonly SOPS_YAML_PATH="${ROOT_DIR}/.sops.yaml"
 readonly SECRET_FILE="${ROOT_DIR}/confs/bootstrap/gitea-admin.enc.yml"
 
-export SOPS_AGE_KEY_FILE=$HOME/.config/sops/age/keys.txt
+export SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-${AGE_KEY_FILE}}"
+
+echo $SOPS_AGE_KEY_FILE
 
 if ! command -v sops >/dev/null 2>&1; then
   echo "Installing SOPS ..."
