@@ -8,14 +8,24 @@ ROOT_DIR="$(cd "$(dirname "$0")"/.. && pwd)"
 BOOTSTRAP_DIR="$ROOT_DIR/confs/bootstrap"
 
 NAMESPACE="gitea"
-REALESE_NAME="my-gitea"
-
 MANIFESTS_DIR="$ROOT_DIR/confs/app/"
 SECRET_FILE="$BOOTSTRAP_DIR/gitea-admin.enc.yml"
 
 echo "[**] Adding Gitea Helm repository..."
 helm repo add gitea-charts https://dl.gitea.com/charts/
 helm repo update
+
+if ! command -v age >/dev/null 2>&1; then
+  echo "Installing age ..."
+  sudo dnf install age
+fi
+
+if ! command -v sops >/dev/null 2>&1; then
+  echo "Installing SOPS ..."
+  curl -LO https://github.com/getsops/sops/releases/download/v3.13.3/sops-v3.13.3.linux.amd64
+  sudo mv sops-v3.13.3.linux.amd64 /usr/local/bin/sops
+  sudo chmod +x /usr/local/bin/sops
+fi
 
 DECRYPTED_SECRET="$(sops --decrypt "$SECRET_FILE")"
 echo "$DECRYPTED_SECRET" | kubectl apply -f -

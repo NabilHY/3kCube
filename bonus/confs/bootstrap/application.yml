@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: http://my-gitea-http.gitea.svc.cluster.local:3000/root/iot-gitops.git
+    repoURL: http://my-gitea-http.gitea.svc.cluster.local:3000/dev/iot-gitops.git
     targetRevision: main
     path: .
   destination:

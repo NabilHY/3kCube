@@ -3,10 +3,19 @@
 set -eou pipefail
 
 ROOT_DIR="$(cd "$(dirname "$0")"/.. && pwd)"
-readonly AGE_KEY_DIR="${HOME}/.config/sops/"
+readonly AGE_KEY_DIR="${HOME}/.config/sops"
 readonly AGE_KEY_FILE="${AGE_KEY_DIR}/keys.txt"
 readonly SOPS_YAML_PATH="${ROOT_DIR}/.sops.yaml"
 readonly SECRET_FILE="${ROOT_DIR}/confs/bootstrap/gitea-admin.enc.yml"
+
+export SOPS_AGE_KEY_FILE=$HOME/.config/sops/age/keys.txt
+
+if ! command -v sops >/dev/null 2>&1; then
+  echo "Installing SOPS ..."
+  curl -LO https://github.com/getsops/sops/releases/download/v3.13.3/sops-v3.13.3.linux.amd64
+  sudo mv sops-v3.13.3.linux.amd64 /usr/local/bin/sops
+  sudo chmod +x /usr/local/bin/sops
+fi
 
 if ! command -v age >/dev/null 2>&1; then
   echo "installing age ..."
