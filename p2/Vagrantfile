@@ -16,6 +16,7 @@ Vagrant.configure("2") do |config|
       lv.uri    = "qemu:///system"
       lv.cpus   = 2
       lv.memory = 2048
+      lv.name = SERVER_HOST
     end
     #1. Base Dependencies (Run First)
     server.vm.provision "install_deps", type: "shell", path: "scripts/deps.sh"
