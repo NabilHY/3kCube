@@ -3,6 +3,15 @@ gitea:
     existingSecret: gitea-admin-secret
     email: "admin@local.test"
     passwordMode: initialOnlyNoReset
+  config:
+    database:
+      DB_TYPE: sqlite3
+postgresql-ha:
+  enabled: false
+postgresql:
+  enabled: false
+valkey-cluster:
+  enabled: false
 service:
   http:
     type: ClusterIP

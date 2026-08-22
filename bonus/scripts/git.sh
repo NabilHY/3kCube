@@ -17,7 +17,7 @@ helm repo update
 
 if ! command -v age >/dev/null 2>&1; then
   echo "Installing age ..."
-  sudo dnf install age
+  sudo dnf install age -y
 fi
 
 if ! command -v sops >/dev/null 2>&1; then

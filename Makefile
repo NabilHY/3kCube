@@ -142,8 +142,9 @@ p3-status:
 	@echo "── all pods ──"
 	-kubectl get pods -A
 
-## Run CD validation test (delete or update)
+## Run CD validation test (delete or update): make p3-test ACTION=delete
 p3-test:
+	@test -n "$(ACTION)" || { echo "Usage: make p3-test ACTION=<delete|update>"; exit 1; }
 	cd $(P3_DIR)/scripts && python3 test-cd.py $(ACTION)
 
 # ═══════════════════════════════════════════════════════════
@@ -181,6 +182,7 @@ bonus-status:
 	@echo "── all pods ──"
 	-kubectl get pods -A
 
-## Run CD validation test (delete or update)
+## Run CD validation test (delete or update): make bonus-test ACTION=delete
 bonus-test:
+	@test -n "$(ACTION)" || { echo "Usage: make bonus-test ACTION=<delete|update>"; exit 1; }
 	cd $(BONUS_DIR)/scripts && python3 test-cd.py $(ACTION)
