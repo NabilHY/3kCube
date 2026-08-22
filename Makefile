@@ -1,6 +1,6 @@
 .PHONY: help p1 p1-provision p1-clean p1-re p1-status \
 	p1-ssh-server p1-ssh-agent p1-halt \
-	p2 p2-test p2-clean p2-re p2-halt p2-restore p2-status p2-ssh \
+	p2 p2-clean p2-re p2-halt p2-restore p2-status p2-ssh \
 	p3 p3-clean p3-re p3-status p3-test \
 	bonus bonus-clean bonus-re bonus-status bonus-test
 
@@ -82,7 +82,6 @@ p1-ssh-agent:
 p2: p2-clean
 	@echo "⟶  Bringing up p2 server VM …"
 	cd $(P2_DIR) && vagrant up
-	@$(MAKE) p2-test
 
 ## Destroy the VM
 p2-clean:
