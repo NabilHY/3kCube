@@ -6,7 +6,9 @@ set -eou pipefail
 trap 'echo -e "\nError: Command failed on line $LINENO: $BASH_COMMAND" >&2' ERR
 
 echo "==> [1/5] Installing Docker Engine ..."
-sudo dnf config-manager addrepo --from-repofile https://download.docker.com/linux/fedora/docker-ce.repo --overwrite
+sudo dnf config-manager addrepo --from-repofile https://download.docker.com/linux/fedora/docker-ce.repo --overwrite \
+	|| sudo curl -fsSL https://download.docker.com/linux/fedora/docker-ce.repo -o /etc/yum.repos.d/docker-ce.repo 
+
 sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 echo "==> [2/5] Starting the docker engine ..."
