@@ -1,0 +1,30 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    application.yml                                    :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: nhayoun <nhayoun@student.42.fr>            +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2026/08/26 19:20:12 by nhayoun           #+#    #+#              #
+#    Updated: 2026/08/26 19:20:12 by nhayoun          ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nhayoun-playground
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: http://my-gitea-http.gitea.svc.cluster.local:3000/dev/iot-gitops.git
+    targetRevision: main
+    path: .
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

@@ -1,0 +1,30 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    ingress.yml                                        :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: nhayoun <nhayoun@student.1337.ma>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2026/08/26 18:35:46 by nhayoun           #+#    #+#              #
+#    Updated: 2026/08/26 18:36:30 by nhayoun          ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nhayoun-playground
+  namespace: dev
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: playground.localhost
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nhayoun-playground
+                port:
+                  number: 8885

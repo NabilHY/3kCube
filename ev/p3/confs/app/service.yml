@@ -1,0 +1,24 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    service.yml                                        :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: nhayoun <nhayoun@student.1337.ma>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2026/08/26 18:35:50 by nhayoun           #+#    #+#              #
+#    Updated: 2026/08/26 18:36:31 by nhayoun          ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: nhayoun-playground
+  namespace: dev
+spec:
+  type: ClusterIP
+  selector:
+    app: nhayoun-playground
+  ports:
+    - port: 8885
+      targetPort: 8885

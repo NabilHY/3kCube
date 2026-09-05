@@ -20,4 +20,3 @@ echo "Listing Deployments:"
 kubectl get deployments
 echo "Listing Services:"
 kubectl get services
-

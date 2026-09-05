@@ -1,0 +1,60 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Vagrantfile                                        :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: aessaoud <aessaoud@student.1337.ma>        +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2026/08/26 18:34:13 by aessaoud          #+#    #+#              #
+#    Updated: 2026/08/26 18:34:15 by aessaoud         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+Vagrant.configure("2") do |config|
+    config.vm.box = "generic/alpine319"
+    config.vm.synced_folder ".", "/vagrant"
+  
+    TOKEN_FILE="/vagrant/.k3s-node-token"
+    SERVER_IP="192.168.56.110"
+    AGENT_IP="192.168.56.111"
+    SERVER_HOST="aessaoudS"
+    AGENT_HOST="nhayounSW"
+  
+    # =========================
+    # Server
+    # =========================
+  
+    config.vm.define "server" do |server|
+      server.vm.hostname = SERVER_HOST
+      server.vm.network "private_network", ip: SERVER_IP
+      
+  
+      server.vm.provider "virtualbox" do |vb|
+        vb.memory = 1024
+        vb.cpus = 1
+        vb.name = SERVER_HOST
+      end
+  
+      # Running commong script
+      server.vm.provision "shell", path: "scripts/common.sh"
+      server.vm.provision "shell", path: "scripts/server.sh", args: [SERVER_IP, TOKEN_FILE]
+    end
+  
+    # =========================
+    # Agent
+    # =========================
+  
+    config.vm.define "agent" do |agent|
+      agent.vm.hostname = AGENT_HOST
+      agent.vm.network "private_network", ip: AGENT_IP
+  
+      agent.vm.provider "virtualbox" do |vb|
+        vb.memory = 1024
+        vb.cpus = 1
+        vb.name = AGENT_HOST
+      end
+  
+      agent.vm.provision "shell", path: "scripts/common.sh"
+      agent.vm.provision "shell", path: "scripts/agent.sh", args: [SERVER_IP, AGENT_IP, TOKEN_FILE]
+    end
+  end

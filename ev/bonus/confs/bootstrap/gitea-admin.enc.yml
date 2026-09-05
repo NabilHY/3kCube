@@ -1,0 +1,36 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    gitea-admin.enc.yml                                :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: nhayoun <nhayoun@student.42.fr>            +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2026/08/26 19:20:23 by nhayoun           #+#    #+#              #
+#    Updated: 2026/08/26 19:20:24 by nhayoun          ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+apiVersion: v1
+kind: Secret
+metadata:
+    name: gitea-admin-secret
+    namespace: gitea
+type: Opaque
+stringData:
+    username: ENC[AES256_GCM,data:BrNo,iv:k4hKnOTI7EfZriR4ItVwMDRIHFaXIEbcg6xbK8gjH9I=,tag:pjSaG/FJJmoccELlQTd5Sg==,type:str]
+    password: ENC[AES256_GCM,data:IhbkUfD/lTbJ8g==,iv:XUo/nWfZqP0rFmtKbPBba5DTf7Czlg2KqxgUAPYMx9I=,tag:fx5myn4a+zYFbfBXkw37cQ==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSByTWJwaER6N09EVERmUCtl
+            QitBdkM1bC9BUFhwRndYbzN5N2x2RXZnUWljCjdQTUZrRFllU2VVU1ZaYWFBQTNo
+            cFVUTkFaYjZ6ZjZKVEdGRjRNaGhEVkUKLS0tIHNkYk5XSE9na0wvWGE0ekVFK0ZO
+            bWo5eEJHVEQwaDVtWFhLOFJtb1JMR2cKrnarSWx37ELoO5DuFH+dpAKxKLEocckf
+            Njt7xcwrw/WDpTLR9UDnBSisE0blmlCvum5xaS+tl4NBHGitYnoXww==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1efdgz5laght76ntu0nuszvfl3jld5en7zcvgvp32gs43v4k9qugsuhhywr
+    encrypted_regex: ^(data|stringData)$
+    lastmodified: "2026-08-17T16:50:54Z"
+    mac: ENC[AES256_GCM,data:eI4aOC1KpRpI9wuDeCSAmKZA9W01gqUdnTAcGAIoGbuxvIBZ2FcF2/SKxe2r/Ji9WFojXAf85i/ngQbOwbMQkELcheVYuhSMb7EoPPtxzp1Qt5UxEerUh/sO2HXDnlkjUAB6W/vvrhTxVgiugL8ChPoGq2TLSWVceMOIEQJ+lJg=,iv:4An/yoWhlZTaqm1Ml2OpzKcdg8mRLEHgYQxz387hGsk=,tag:byy3Hws5oeZNVQvx8QKoYA==,type:str]
+    version: 3.13.3

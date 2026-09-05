@@ -1,0 +1,37 @@
+SERVER_IP   = "192.168.56.110"
+SERVER_HOST = "nhayounS"
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "generic/alpine319"
+  config.vm.box_check_update = false
+
+  # --- Server Node ---
+  config.vm.define SERVER_HOST do |server|
+    server.vm.hostname = SERVER_HOST
+    server.vm.network "private_network", ip: SERVER_IP
+
+    server.vm.synced_folder ".", "/vagrant", type: "rsync"
+
+    server.vm.provider :libvirt do |lv|
+      lv.uri    = "qemu:///system"
+      lv.cpus   = 2
+      lv.memory = 2048
+      lv.name = SERVER_HOST
+    end
+
+    server.vm.provider :virtualbox do |vb|
+      vb.cpus   = 2
+      vb.memory = 2048
+      vb.name = SERVER_HOST
+    end
+
+    #1. Base Dependencies (Run First)
+    server.vm.provision "install_deps", type: "shell", path: "scripts/deps.sh"
+    server.vm.provision "setup_modules", type: "shell", path: "scripts/kernel-modules.sh"
+    server.vm.provision "install_server_k3s",  type: "shell", path: "scripts/server.sh", env: {
+      "SERVER_IP" => SERVER_IP,
+      "SERVER_HOST" => SERVER_HOST
+    }
+    server.vm.provision "Deploying app pods", type: "shell", path: "scripts/deployments.sh"
+  end
+end

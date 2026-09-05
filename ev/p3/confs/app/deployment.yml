@@ -1,0 +1,33 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    deployment.yml                                     :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: nhayoun <nhayoun@student.1337.ma>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2026/08/26 18:35:40 by nhayoun           #+#    #+#              #
+#    Updated: 2026/08/26 18:36:29 by nhayoun          ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nhayoun-playground
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nhayoun-playground
+  template:
+    metadata:
+      labels:
+        app: nhayoun-playground
+    spec:
+      containers:
+        - name: nhayoun-playground
+          image: goslinabil/3kcube:v2
+          # pure docs
+          ports:
+            - containerPort: 8885

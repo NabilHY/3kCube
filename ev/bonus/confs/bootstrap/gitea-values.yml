@@ -1,0 +1,30 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    gitea-values.yml                                   :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: nhayoun <nhayoun@student.42.fr>            +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2026/08/26 19:20:30 by nhayoun           #+#    #+#              #
+#    Updated: 2026/08/26 19:20:31 by nhayoun          ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+gitea:
+  admin:
+    existingSecret: gitea-admin-secret
+    email: "admin@local.test"
+    passwordMode: initialOnlyNoReset
+  config:
+    database:
+      DB_TYPE: sqlite3
+postgresql-ha:
+  enabled: false
+postgresql:
+  enabled: false
+valkey-cluster:
+  enabled: false
+service:
+  http:
+    type: ClusterIP
+    port: 3000
